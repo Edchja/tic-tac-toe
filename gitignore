@@ -1,0 +1,43 @@
+.vscode/*
+!.vscode/launch.json
+# !.vscode/settings.json
+#!.vscode/tasks.json
+#!.vscode/extensions.json
+.history/
+*.code-workspace
+
+# Env
+*.env
+
+# Debug
+__debug_bin
+debug
+
+# Log
+*.log
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Generated Systemfiles
+.DS_Store
+Thumbs.db
