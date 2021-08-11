@@ -44,7 +44,7 @@ func main() {
 		}
 
 		printBoard()
-		printWinningAnimation()
+		fonts.PrintWinningAnimation(fontArr)
 	}
 }
 
@@ -127,17 +127,6 @@ func printBoard() {
 		if row != len(gameBoardArr)-1 {
 			fmt.Println("-------------")
 		}
-	}
-}
-
-func printWinningAnimation() {
-	switch {
-	case game.XWon:
-		fonts.PrintFont(fontArr, fonts.XWonFont, 45)
-	case game.OWon:
-		fonts.PrintFont(fontArr, fonts.OWonFont, 45)
-	case game.Tie:
-		fonts.PrintFont(fontArr, fonts.TieFont, 25)
 	}
 }
 

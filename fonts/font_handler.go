@@ -3,6 +3,8 @@ package fonts
 import (
 	"fmt"
 	"time"
+
+	"edchja.de/tic-tac-toe/game"
 )
 
 const (
@@ -33,13 +35,6 @@ var (
    ██║   ██║██╔══╝
    ██║   ██║███████╗
    ╚═╝   ╚═╝╚══════╝`
-
-	gameBoardString = `
-|   |   |   |
-–––––––––––––
-|   |   |   |
-–––––––––––––
-|   |   |   |`
 )
 
 func PrintFont(arr [][]rune, font string, size int) {
@@ -67,7 +62,7 @@ func PrintFont(arr [][]rune, font string, size int) {
 				}
 			}
 			for _, line := range arr {
-				fmt.Println(string(line))
+				fmt.Println("\u001b[34;1m", string(line), "\u001b[0m")
 			}
 			first = false
 			time.Sleep(refreshRate)
@@ -90,6 +85,17 @@ func flow(arr [][]rune) {
 			arr[row][0] = tempLastIndex
 		}
 		time.Sleep(100 * time.Millisecond)
+	}
+}
+
+func PrintWinningAnimation(fontArr [][]rune) {
+	switch {
+	case game.XWon:
+		PrintFont(fontArr, XWonFont, 45)
+	case game.OWon:
+		PrintFont(fontArr, OWonFont, 45)
+	case game.Tie:
+		PrintFont(fontArr, TieFont, 25)
 	}
 }
 
