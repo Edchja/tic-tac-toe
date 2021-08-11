@@ -10,29 +10,23 @@ import (
 	"time"
 
 	"edchja.de/tic-tac-toe/fonts"
+	"edchja.de/tic-tac-toe/game"
 )
 
-const (
-	player1 = 1
-	player2 = 2
-)
-
-var gameBoard = make([][]int, 3)
+var gameBoardArr = make([][]int, 3)
 var fontArr = make([][]rune, 7)
-var gameBoardArr = make([][]rune, 6)
 var drawValues = []string{" ", "X", "O"}
+var playerArr = []int{1, 2}
+var player = playerArr[0]
+var computer = playerArr[1]
 
+var gameState bool
 var reader = bufio.NewReader(os.Stdin)
-var xWon, oWon, tie bool
 
 // TODO:	Cursor resetting einfügen
-// TODO:	Refactor to structs
-// TODO:	Refactor to DRY
 // TODO:	AI never loses
 
 func main() {
-	var gameState bool
-
 	fillArray()
 
 	printBoard()
@@ -40,125 +34,76 @@ func main() {
 	for gameState != true {
 		input := setInput()
 
-		processInput(input, player1)
+		processInput(input, player)
 
 		computerInput := getRandomNumber(1, 9)
-		processInput(computerInput, player2)
+		processInput(computerInput, computer)
 
-		gameState = gamelogic()
+		for _, player := range playerArr {
+			gameState = game.Condition(gameBoardArr, player)
+		}
 
 		printBoard()
-		printWinningScreen()
+		printWinningAnimation()
 	}
 }
 
-func gamelogic() bool {
-	var (
-		// Check all rows.
-		x = (gameBoard[0][0] == 1 && gameBoard[0][1] == 1 && gameBoard[0][2] == 1 ||
-			gameBoard[1][0] == 1 && gameBoard[1][1] == 1 && gameBoard[1][2] == 1 ||
-			gameBoard[2][0] == 1 && gameBoard[2][1] == 1 && gameBoard[2][2] == 1 ||
-
-			// Check all columns.
-			gameBoard[0][0] == 1 && gameBoard[1][0] == 1 && gameBoard[2][0] == 1 ||
-			gameBoard[0][1] == 1 && gameBoard[1][1] == 1 && gameBoard[2][1] == 1 ||
-			gameBoard[0][2] == 1 && gameBoard[1][2] == 1 && gameBoard[2][2] == 1 ||
-
-			// Check diaGonals.
-			gameBoard[0][0] == 1 && gameBoard[1][1] == 1 && gameBoard[2][2] == 1 ||
-			gameBoard[0][2] == 1 && gameBoard[1][1] == 1 && gameBoard[2][0] == 1)
-
-		o = (gameBoard[0][0] == 2 && gameBoard[0][1] == 2 && gameBoard[0][2] == 2 ||
-			gameBoard[1][0] == 2 && gameBoard[1][1] == 2 && gameBoard[1][2] == 2 ||
-			gameBoard[2][0] == 2 && gameBoard[2][1] == 2 && gameBoard[2][2] == 2 ||
-
-			// Check all columns.
-			gameBoard[0][0] == 2 && gameBoard[1][0] == 2 && gameBoard[2][0] == 2 ||
-			gameBoard[0][1] == 2 && gameBoard[1][1] == 2 && gameBoard[2][1] == 2 ||
-			gameBoard[0][2] == 2 && gameBoard[1][2] == 2 && gameBoard[2][2] == 2 ||
-
-			// Check diaGonals.
-			gameBoard[0][0] == 2 && gameBoard[1][1] == 2 && gameBoard[2][2] == 2 ||
-			gameBoard[0][2] == 2 && gameBoard[1][1] == 2 && gameBoard[2][0] == 2)
-
-		// Check if cells are empty.
-		freeCellsLeft = (gameBoard[0][0] == 0 || gameBoard[0][1] == 0 || gameBoard[0][2] == 0 ||
-			gameBoard[1][0] == 0 || gameBoard[1][1] == 0 || gameBoard[1][2] == 0 ||
-			gameBoard[2][0] == 0 || gameBoard[2][1] == 0 || gameBoard[2][2] == 0)
-	)
-
-	switch {
-	case x && !o:
-		xWon = true
-		return xWon
-	case o && !x:
-		oWon = true
-		return oWon
-	case !freeCellsLeft:
-		tie = true
-		return tie
-	}
-	return false
-}
-
-func processInput(input int, player int) {
+func processInput(input, player int) {
 	if input >= 1 && input <= 9 {
 		switch input {
 		case 1:
-			checkWinner(2, 0, player)
+			processMove(2, 0, player)
 		case 2:
-			checkWinner(2, 1, player)
+			processMove(2, 1, player)
 		case 3:
-			checkWinner(2, 2, player)
+			processMove(2, 2, player)
 		case 4:
-			checkWinner(1, 0, player)
+			processMove(1, 0, player)
 		case 5:
-			checkWinner(1, 1, player)
+			processMove(1, 1, player)
 		case 6:
-			checkWinner(1, 2, player)
+			processMove(1, 2, player)
 		case 7:
-			checkWinner(0, 0, player)
+			processMove(0, 0, player)
 		case 8:
-			checkWinner(0, 1, player)
+			processMove(0, 1, player)
 		case 9:
-			checkWinner(0, 2, player)
+			processMove(0, 2, player)
 		}
 	} else if player == 1 {
-		fmt.Println("wrong input!")
+		fmt.Println("\u001b[31mwrong input!\u001b[0m")
 
 		playerInput := setInput()
-		processInput(playerInput, player1)
+		processInput(playerInput, player)
 	} else if player == 2 {
 		computer := getRandomNumber(1, 9)
-		processInput(computer, player2)
+		processInput(computer, player)
+	}
+}
+
+func processMove(row, col, player int) {
+	switch {
+	case gameBoardArr[row][col] == 0:
+		gameBoardArr[row][col] = player
+
+	case gameBoardArr[row][col] != 0 && player != 2:
+		fmt.Println("\u001b[31mfield already set!\u001b[0m")
+
+		playerInput := setInput()
+		processInput(playerInput, player)
+
+	case gameBoardArr[row][col] != 0 && player != 1 && game.Condition(gameBoardArr, player) != true:
+		computer := getRandomNumber(1, 9)
+		processInput(computer, player)
 	}
 }
 
 func fillArray() {
-	// propagates array with 0.
-	for row := range gameBoard {
-		gameBoard[row] = make([]int, 3)
-		for col := range gameBoard[row] {
-			gameBoard[row][col] = 0
+	for row := range gameBoardArr {
+		gameBoardArr[row] = make([]int, 3)
+		for col := range gameBoardArr[row] {
+			gameBoardArr[row][col] = 0
 		}
-	}
-}
-
-func checkWinner(row, col, player int) {
-	switch {
-	case gameBoard[row][col] == 0:
-		gameBoard[row][col] = player
-
-	case gameBoard[row][col] != 0 && player != 2:
-		fmt.Println("field already set")
-
-		playerInput := setInput()
-		processInput(playerInput, player1)
-
-	case gameBoard[row][col] != 0 && player != 1 && gamelogic() == false:
-		computer := getRandomNumber(1, 9)
-		// fmt.Println("{computer: if already set: ", computer, "}")
-		processInput(computer, player2)
 	}
 }
 
@@ -174,24 +119,24 @@ func setInput() int {
 }
 
 func printBoard() {
-	for row := 0; row < len(gameBoard); row++ {
-		for col := range gameBoard[row] {
-			fmt.Print("| ", drawValues[gameBoard[row][col]], " ")
+	for row := 0; row < len(gameBoardArr); row++ {
+		for col := range gameBoardArr[row] {
+			fmt.Print("| ", drawValues[gameBoardArr[row][col]], " ")
 		}
 		fmt.Println("|")
-		if row != len(gameBoard)-1 {
+		if row != len(gameBoardArr)-1 {
 			fmt.Println("-------------")
 		}
 	}
 }
 
-func printWinningScreen() {
+func printWinningAnimation() {
 	switch {
-	case xWon:
+	case game.XWon:
 		fonts.PrintFont(fontArr, fonts.XWonFont, 45)
-	case oWon:
+	case game.OWon:
 		fonts.PrintFont(fontArr, fonts.OWonFont, 45)
-	case tie:
+	case game.Tie:
 		fonts.PrintFont(fontArr, fonts.TieFont, 25)
 	}
 }
