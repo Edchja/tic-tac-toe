@@ -71,7 +71,9 @@ func processInput(input, player int) {
 			processMove(0, 2, player)
 		}
 	} else if player == 1 {
-		fmt.Println("\u001b[31mwrong input!\u001b[0m")
+		fmt.Println("\u001b[31;1mwrong input!\u001b[0m")
+
+		printBoard()
 
 		playerInput := setInput()
 		processInput(playerInput, player)
@@ -87,7 +89,9 @@ func processMove(row, col, player int) {
 		gameBoardArr[row][col] = player
 
 	case gameBoardArr[row][col] != 0 && player != 2:
-		fmt.Println("\u001b[31mfield already set!\u001b[0m")
+		fmt.Println("\u001b[31;1mfield already set!\u001b[0m")
+
+		printBoard()
 
 		playerInput := setInput()
 		processInput(playerInput, player)
