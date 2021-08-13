@@ -99,6 +99,10 @@ func PrintWinningAnimation(fontArr [][]rune) {
 	}
 }
 
+func PrintErrorMessage(text string) {
+	fmt.Printf("\u001b[31;1m%s\u001b[0m\n", text)
+}
+
 // Bewegt den Cursor eine Zeile nach oben.
 func up() {
 	fmt.Print("\033[A")
