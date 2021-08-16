@@ -14,11 +14,10 @@ import (
 )
 
 var gameBoardArr = make([][]int, 3)
-var fontArr = make([][]rune, 7)
 var drawValues = []string{" ", "X", "O"}
 var playerArr = []int{1, 2}
 var player = playerArr[0]
-var computer = playerArr[1]
+var computer = playerArr[1] 
 
 var gameState bool
 var reader = bufio.NewReader(os.Stdin)
@@ -44,7 +43,7 @@ func main() {
 		}
 
 		printBoard()
-		fonts.PrintWinningAnimation(fontArr)
+		fonts.PrintWinningAnimation()
 	}
 }
 
@@ -136,11 +135,6 @@ func printBoard() {
 
 func getRandomNumber(min, max int) int {
 	rand.Seed(time.Now().UnixNano())
-	randomNum := rand.Intn((max - min + 1) + min)
-
-	if randomNum != 0 {
-		return randomNum
-	} else {
-		return getRandomNumber(min, max)
-	}
+	randomNum := rand.Intn((max - min + 1)) + min
+	return randomNum
 }
