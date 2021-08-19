@@ -7,8 +7,6 @@ import (
 
 var gameBoardArr = make([][]int, 3)
 var playerArr = []int{1, 2}
-var player = playerArr[0]
-var computer = playerArr[1]
 
 var gameState bool
 
@@ -20,14 +18,11 @@ func main() {
 	for gameState != true {
 		input := game.SetInput()
 
-		game.ProcessInput(gameBoardArr, input, player)
-
-		// computerInput := getRandomNumber(1, 9)
-		// processInput(computerInput, computer)
-		game.ProcessComputerMove(gameBoardArr, player)
+		game.ProcessPlayerMove(gameBoardArr, input)
+		game.ProcessComputerMove(gameBoardArr, input)
 
 		for _, player := range playerArr {
-			gameState = game.Condition(gameBoardArr, player)
+			gameState = game.CheckCondition(gameBoardArr, player)
 		}
 
 		fonts.PrintBoard(gameBoardArr)

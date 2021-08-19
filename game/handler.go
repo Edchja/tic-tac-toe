@@ -15,6 +15,32 @@ var (
 	reader          = bufio.NewReader(os.Stdin)
 )
 
+const (
+	player = 1
+)
+
+func ProcessPlayerMove(gameBoardArr [][]int, input int) {
+	if input >= 1 && input <= 9 {
+		row, col := getPostition(input)
+		if gameBoardArr[row][col] == 0 {
+			gameBoardArr[row][col] = player
+		} else {
+			fonts.PrintErrorMessage("field already set!")
+			fonts.PrintBoard(gameBoardArr)
+
+			playerInput := SetInput()
+			ProcessPlayerMove(gameBoardArr, playerInput)
+		}
+	} else {
+		fonts.PrintErrorMessage("wrong input!")
+
+		fonts.PrintBoard(gameBoardArr)
+
+		playerInput := SetInput()
+		ProcessPlayerMove(gameBoardArr, playerInput)
+	}
+}
+
 func SetInput() int {
 	fmt.Println("\u001b[37mEnter a number: \u001b[0m")
 
@@ -26,61 +52,31 @@ func SetInput() int {
 	return inputInt
 }
 
-func ProcessInput(gameBoardArr [][]int, input, player int) {
-	if input >= 1 && input <= 9 {
-		switch input {
-		case 1:
-			ProcessMove(gameBoardArr, 2, 0, player)
-		case 2:
-			ProcessMove(gameBoardArr, 2, 1, player)
-		case 3:
-			ProcessMove(gameBoardArr, 2, 2, player)
-		case 4:
-			ProcessMove(gameBoardArr, 1, 0, player)
-		case 5:
-			ProcessMove(gameBoardArr, 1, 1, player)
-		case 6:
-			ProcessMove(gameBoardArr, 1, 2, player)
-		case 7:
-			ProcessMove(gameBoardArr, 0, 0, player)
-		case 8:
-			ProcessMove(gameBoardArr, 0, 1, player)
-		case 9:
-			ProcessMove(gameBoardArr, 0, 2, player)
-		}
-	} else if player == 1 {
-		fonts.PrintErrorMessage("wrong input!")
-
-		fonts.PrintBoard(gameBoardArr)
-
-		playerInput := SetInput()
-		ProcessInput(gameBoardArr, playerInput, player)
-	} else if player == 2 {
-		// computer := getRandomNumber(1, 9)
-		// processInput(computer, player)
+func getPostition(playerInput int) (int, int) {
+	switch playerInput {
+	case 1:
+		return 2, 0
+	case 2:
+		return 2, 1
+	case 3:
+		return 2, 2
+	case 4:
+		return 1, 0
+	case 5:
+		return 1, 1
+	case 6:
+		return 1, 2
+	case 7:
+		return 0, 0
+	case 8:
+		return 0, 1
+	case 9:
+		return 0, 2
 	}
+	return -1, -1
 }
 
-func ProcessMove(gameBoardArr [][]int, row, col, player int) {
-	switch {
-	case gameBoardArr[row][col] == 0:
-		gameBoardArr[row][col] = player
-
-	case gameBoardArr[row][col] != 0 && player != 2:
-		fonts.PrintErrorMessage("field already set!")
-
-		fonts.PrintBoard(gameBoardArr)
-
-		playerInput := SetInput()
-		ProcessInput(gameBoardArr, playerInput, player)
-
-	case gameBoardArr[row][col] != 0 && player != 1 && Condition(gameBoardArr, player) != true:
-		computer := GetRandomNumber(1, 9)
-		ProcessInput(gameBoardArr, computer, player)
-	}
-}
-
-func Condition(gameBoardArr [][]int, player int) bool {
+func CheckCondition(gameBoardArr [][]int, player int) bool {
 	var (
 		// Check all rows.
 		state = (gameBoardArr[0][0] == player && gameBoardArr[0][1] == player && gameBoardArr[0][2] == player ||
